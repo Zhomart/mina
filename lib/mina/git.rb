@@ -49,6 +49,15 @@ namespace :git do
       }
     end
 
+    last_commit_file = "#{deploy_to}/last_commit.txt"
+
+    save_status = %[
+      #{echo_cmd %[touch #{last_commit_file} && chmod 666 #{last_commit_file}]} &&
+      #{echo_cmd %[git --no-pager log --format=medium -n 1 > #{last_commit_file}]} &&
+      echo "File #{last_commit_file} updated." &&
+      echo &&
+    ]
+
     status = %[
       echo "-----> Using this git commit" &&
       echo &&
@@ -57,6 +66,6 @@ namespace :git do
       echo
     ]
 
-    queue clone + status
+    queue clone + save_status + status
   end
 end
